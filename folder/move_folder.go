@@ -14,12 +14,12 @@ func (f *driver) MoveFolder(name string, dst string) ([]Folder, error) {
 	var srcFolder *Folder
 	var dstFolder *Folder
 
-	for _, f := range f.folders {
-		if f.Name == name {
-			srcFolder = &f
+	for _, folder := range f.folders {
+		if folder.Name == name {
+			srcFolder = &folder
 		}
-		if f.Name == dst {
-			dstFolder = &f
+		if folder.Name == dst {
+			dstFolder = &folder
 		}
 	}
 
@@ -35,22 +35,27 @@ func (f *driver) MoveFolder(name string, dst string) ([]Folder, error) {
 		return nil, errors.New("folders belong to different organisations")
 	}
 
-	if strings.HasPrefix(srcFolder.Paths, dstFolder.Paths) {
-		return nil, errors.New("cannot move a folder to one of its children")
+	if srcFolder.Name == dst || strings.HasPrefix(srcFolder.Paths, dstFolder.Paths) {
+		return nil, errors.New("cannot move a folder to itself or to one of its children")
+	}
+
+	if strings.HasPrefix(dstFolder.Paths, srcFolder.Paths) {
+		return nil, errors.New("cannot move a folder under its own descendant")
 	}
 
 	newParentPath := dstFolder.Paths + "." + srcFolder.Name
 	oldParentPath := srcFolder.Paths
 
 	updatedFolders := []Folder{}
-
-	for _, f := range f.folders {
-		if strings.HasPrefix(f.Paths, oldParentPath) {
-			newPath := strings.Replace(f.Paths, oldParentPath, newParentPath, 1)
-			f.Paths = newPath
-			updatedFolders = append(updatedFolders, f)
+	for _, folder := range f.folders {
+		if strings.HasPrefix(folder.Paths, oldParentPath) {
+			newPath := strings.Replace(folder.Paths, oldParentPath, newParentPath, 1)
+			folder.Paths = newPath
 		}
+		updatedFolders = append(updatedFolders, folder)
 	}
+
+	srcFolder.Paths = newParentPath
 
 	return updatedFolders, nil
 }
