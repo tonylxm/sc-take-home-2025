@@ -31,7 +31,7 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) ([]Folder, err
 	folders := f.folders
 
 	if len(folders) == 0 {
-		return nil, errors.New("No folders found for the given organisation")
+		return nil, errors.New("no folders found for the given organisation")
 	}
 
 	var parentFolder *Folder
@@ -43,7 +43,7 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) ([]Folder, err
 	}
 
 	if parentFolder == nil {
-		return nil, errors.New("No folder found with the given name")
+		return nil, errors.New("no folder found with the given name")
 	}
 
 	childFolders := []Folder{}
