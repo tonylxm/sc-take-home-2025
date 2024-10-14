@@ -36,7 +36,7 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) ([]Folder, err
 
 	var parentFolder *Folder
 	for _, f := range folders {
-		if f.Name == name {
+		if f.OrgId == orgID && f.Name == name {
 			parentFolder = &f
 			break
 		}
@@ -47,8 +47,9 @@ func (f *driver) GetAllChildFolders(orgID uuid.UUID, name string) ([]Folder, err
 	}
 
 	childFolders := []Folder{}
+	parentPath := parentFolder.Paths + "."
 	for _, f := range folders {
-		if strings.HasPrefix(f.Paths, parentFolder.Paths) && f.Paths != parentFolder.Paths {
+		if strings.HasPrefix(f.Paths, parentPath) && f.Paths != parentFolder.Paths {
 			childFolders = append(childFolders, f)
 		}
 	}
